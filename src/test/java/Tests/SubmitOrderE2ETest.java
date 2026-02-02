@@ -9,10 +9,10 @@ import java.util.List;
 
 public class SubmitOrderE2ETest extends BaseTest {
 
+    String productName = "ZARA COAT 3";
       @Test
-      public void submitOrder()  throws IOException  {
-          String productName = "ZARA COAT 3";
-          LandingPage landingPage = launchApplication();
+      public void submitOrder()  throws IOException, InterruptedException  {
+
           ProductCatalog productCatalog = landingPage.loginApplication("amysantiago@brooklyn99.com", "AmySantiago123#");
           List<WebElement> products = productCatalog.getProductList();
           productCatalog.addProductToCart(productName);
@@ -25,9 +25,15 @@ public class SubmitOrderE2ETest extends BaseTest {
           ConfirmationPage confirmationPage = checkoutPage.SubmitOrder();
           String confirmationMessage = confirmationPage.getConfirmationMessage();
           Assert.assertTrue(confirmationMessage.equalsIgnoreCase("THANKYOU FOR THE ORDER."));
-
       }
 
+      @Test(dependsOnMethods = {"submitOrder"})
+      public void OrderHistoryTest() {
+          ProductCatalog productCatalog = landingPage.loginApplication("amysantiago@brooklyn99.com", "AmySantiago123#");
+          OrderPage orderPage = productCatalog.goToOrdersPage();
+          Assert.assertTrue(orderPage.VerifyOrderIsDisplayed(productName));
+
+      }
 
 
 

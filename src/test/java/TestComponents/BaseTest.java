@@ -7,6 +7,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.util.Properties;
 
 public class BaseTest {
     public WebDriver driver;
+    public LandingPage landingPage;
     public WebDriver initializeDriver() throws IOException {
         Properties prop = new Properties();
         FileInputStream fs = new FileInputStream(System.getProperty("user.dir")+"\\src\\main\\java\\Resources\\GlobalData.properties");
@@ -33,14 +35,15 @@ public class BaseTest {
         return driver;
     }
 
+    @BeforeMethod(alwaysRun = true)
     public LandingPage launchApplication() throws IOException {
          driver = initializeDriver();
-        LandingPage landingPage = new LandingPage(driver);
-        landingPage.goTo();
-        return landingPage;
+         landingPage = new LandingPage(driver);
+         landingPage.goTo();
+         return landingPage;
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void tearDown() {
         if (driver != null) {
             driver.quit();

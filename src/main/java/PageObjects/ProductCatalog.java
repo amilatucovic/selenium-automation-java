@@ -1,11 +1,11 @@
 package PageObjects;
 import AbstractComponents.AbstractComponent;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
@@ -45,14 +45,22 @@ public class ProductCatalog extends AbstractComponent {
 
     public void addProductToCart(String productName) {
         WebElement prod = getProductByName(productName);
-        WebElement addToCartButton = prod.findElement(addToCart);
-        waitForElementToAppear(By.cssSelector(".card-body button:last-of-type"));
-        addToCartButton.click();
-        waitForElementToAppear(toastMessage);
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].scrollIntoView({block: 'center'});", prod);
         waitForElementToDisappear(animation);
         waitForElementToDisappear(spinner);
 
+        WebElement addToCartButton = prod.findElement(addToCart);
+        waitForElementToBeClickable(addToCartButton);
 
+        try {
+            addToCartButton.click();
+        } catch (Exception e) {
+            js.executeScript("arguments[0].click();", addToCartButton);
+        }
 
+        waitForElementToAppear(toastMessage);
+        waitForElementToDisappear(animation);
+        waitForElementToDisappear(spinner);
     }
 }
